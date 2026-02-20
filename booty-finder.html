@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booty Finder! - Solar Lead Generation</title>
+<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Pirata+One&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #2b1d0e;
+  --parchment: #f4e4b8;
+  --parchment-dark: #e8d49a;
+  --parchment-darker: #d4b87a;
+  --ink: #2c1a08;
+  --ink-light: #5c3a18;
+  --red: #8b1a1a;
+  --gold: #c8860a;
+  --gold-light: #e8a820;
+  --border: #8b6914;
+  --border-dark: #5c4010;
+  --surface: #f0d898;
+  --surface2: #e8cc80;
+  --text: #2c1a08;
+  --text-dim: #6b4420;
+  --text-faint: #9b7440;
+  --green: #2a6620;
+  --green-glow: rgba(42,102,32,0.2);
+  --amber: #c87010;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #3d2a12 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, #1a0e05 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8860a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  color: var(--text);
+  font-family: 'IM Fell English', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* TORN PAPER TEXTURE on main content area */
+.parchment-wrap {
+  background: var(--parchment);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E"),
+    linear-gradient(135deg, #f8ecc8 0%, #f0d898 40%, #e8cc80 100%);
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--ink);
+  background-image: linear-gradient(180deg, #1a0e05 0%, #2c1a08 100%);
+  padding: 16px 32px 14px;
+  border-bottom: 4px solid var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+}
+
+header::before {
+  content: '☠';
+  font-size: 28px;
+  color: var(--gold);
+  opacity: 0.3;
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+header::after {
+  content: '☠';
+  font-size: 28px;
+  color: var(--gold);
+  opacity: 0.3;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.logo-wrap { text-align: center; flex: 1; }
+.logo-eyebrow {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--gold-light);
+  letter-spacing: 0.15em;
+  margin-bottom: 2px;
+}
+.logo-main {
+  font-family: 'Pirata One', cursive;
+  font-size: 42px;
+  color: var(--gold-light);
+  line-height: 1;
+  text-shadow: 2px 2px 0 #000, 0 0 30px rgba(200,134,10,0.5);
+  letter-spacing: 0.02em;
+}
+.logo-main span { color: #fff; text-shadow: 1px 1px 0 #000; }
+.logo-sub {
+  font-family: 'IM Fell English', serif;
+  font-size: 11px;
+  color: var(--parchment-darker);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.status-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  min-width: 120px;
+}
+.status-dot { width: 9px; height: 9px; border-radius: 50%; background: #555; border: 1px solid #888; display: inline-block; margin-right: 6px; }
+.status-dot.active { background: #5cd65c; box-shadow: 0 0 8px #5cd65c; animation: pulse 2s infinite; border-color: #4ab84a; }
+.status-text { font-family: 'IM Fell English', serif; font-size: 12px; color: var(--parchment-darker); }
+
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+
+/* ── MARQUEE ── */
+.marquee-bar {
+  background: var(--red);
+  padding: 5px 0;
+  overflow: hidden;
+  border-bottom: 2px solid #5a0e0e;
+  white-space: nowrap;
+}
+.marquee-inner {
+  display: inline-block;
+  animation: marquee 22s linear infinite;
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 12px;
+  color: #ffd080;
+  letter-spacing: 0.05em;
+}
+@keyframes marquee { 0%{transform:translateX(100vw)} 100%{transform:translateX(-100%)} }
+
+/* ── LAYOUT ── */
+.main { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100vh - 108px); }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: linear-gradient(180deg, #e8cc80 0%, #d4b870 100%);
+  border-right: 3px solid var(--border);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background-image:
+    linear-gradient(180deg, #e8cc80 0%, #d4b870 100%),
+    url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 10 L55 40 L85 40 L62 58 L70 88 L50 70 L30 88 L38 58 L15 40 L45 40Z' fill='%23c8860a' fill-opacity='0.06'/%3E%3C/svg%3E");
+}
+
+.panel-label {
+  font-family: 'Pirata One', cursive;
+  font-size: 13px;
+  color: var(--red);
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.field label {
+  font-family: 'IM Fell English', serif;
+  font-size: 11px;
+  color: var(--ink-light);
+  font-style: italic;
+}
+
+input[type="text"], input[type="password"] {
+  background: #fffae8;
+  border: 2px solid var(--border);
+  border-radius: 0;
+  color: var(--ink);
+  font-family: 'IM Fell English', serif;
+  font-size: 13px;
+  padding: 7px 10px;
+  width: 100%;
+  outline: none;
+  box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
+  transition: border-color .2s;
+}
+input[type="text"]:focus, input[type="password"]:focus {
+  border-color: var(--red);
+  box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1), 0 0 0 2px rgba(139,26,26,0.15);
+}
+
+.range-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+.range-row label {
+  font-family: 'IM Fell English', serif;
+  font-size: 11px;
+  color: var(--ink-light);
+  font-style: italic;
+  display: flex;
+  justify-content: space-between;
+}
+.range-val { color: var(--red); font-style: normal; font-weight: bold; }
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--border-dark);
+  outline: none;
+  cursor: pointer;
+  border-radius: 2px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  background: var(--red);
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+hr.divider { border: none; border-top: 1px dashed var(--border); margin: 2px 0; }
+
+.btn {
+  font-family: 'Pirata One', cursive;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  padding: 10px 14px;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 6px;
+  transition: all .15s;
+  border-radius: 2px;
+  text-align: center;
+}
+.btn-primary {
+  background: linear-gradient(180deg, #a02020 0%, #6e1010 100%);
+  color: var(--gold-light);
+  border: 2px solid #5a0808;
+  text-shadow: 1px 1px 2px #000;
+  box-shadow: 0 3px 0 #3a0505, 0 4px 6px rgba(0,0,0,0.3);
+}
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #c02828 0%, #8e1818 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 #3a0505, 0 5px 8px rgba(0,0,0,0.4);
+}
+.btn-primary:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 1px 0 #3a0505; }
+.btn-primary:disabled { background: #8b7050; color: #c8a870; border-color: #6b5030; cursor: not-allowed; box-shadow: none; }
+.btn-secondary {
+  background: linear-gradient(180deg, #c8a050 0%, #9b7830 100%);
+  color: var(--ink);
+  border: 2px solid var(--border-dark);
+  box-shadow: 0 2px 0 #5c4010, 0 3px 5px rgba(0,0,0,0.2);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #d8b060 0%, #ab8840 100%);
+  transform: translateY(-1px);
+}
+.btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.loading-bar { height: 6px; background: var(--border-dark); overflow: hidden; margin-top: 4px; border: 1px solid var(--border); border-radius: 3px; }
+.loading-bar-inner { height: 100%; background: linear-gradient(90deg, var(--red), var(--gold)); width: 0%; transition: width .3s; }
+
+.notice {
+  font-family: 'IM Fell English', serif;
+  font-size: 10px;
+  font-style: italic;
+  color: var(--text-faint);
+  line-height: 1.5;
+  border-left: 3px solid var(--border);
+  padding-left: 8px;
+}
+
+/* ── CONTENT ── */
+.content {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--parchment);
+  background-image: linear-gradient(135deg, #f8ecc8 0%, #f0d898 40%, #e8cc80 100%);
+}
+
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.stat-card {
+  background: linear-gradient(135deg, #fffae8, #f4e4b0);
+  border: 2px solid var(--border);
+  padding: 12px 14px;
+  position: relative;
+  box-shadow: 2px 2px 0 var(--border-dark), 3px 3px 8px rgba(0,0,0,0.15);
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px; right: 3px; bottom: 3px;
+  border: 1px solid rgba(200,134,10,0.3);
+  pointer-events: none;
+}
+.stat-card.highlight { border-color: var(--red); box-shadow: 2px 2px 0 #5a0808, 3px 3px 10px rgba(139,26,26,0.2); }
+.stat-label {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 10px;
+  color: var(--text-faint);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.stat-val {
+  font-family: 'Pirata One', cursive;
+  font-size: 28px;
+  color: var(--ink);
+  line-height: 1;
+}
+.stat-card.highlight .stat-val { color: var(--red); }
+
+/* ── SHIP'S LOG ── */
+.terminal {
+  background: #1a0e05;
+  border: 3px solid var(--border-dark);
+  padding: 12px 14px;
+  height: 110px;
+  overflow-y: auto;
+  font-family: 'IM Fell English', serif;
+  font-size: 11px;
+  line-height: 1.7;
+  color: #a0b890;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+  position: relative;
+}
+.terminal::before {
+  content: "Ship's Log";
+  position: absolute;
+  top: -10px; left: 12px;
+  background: var(--border-dark);
+  color: var(--gold-light);
+  font-family: 'Pirata One', cursive;
+  font-size: 10px;
+  padding: 0 8px;
+  letter-spacing: 0.1em;
+}
+.terminal::-webkit-scrollbar { width: 4px; }
+.terminal::-webkit-scrollbar-thumb { background: var(--border-dark); }
+.log-line { display: flex; gap: 10px; }
+.log-time { color: #5a7050; flex-shrink: 0; }
+.log-msg.ok { color: #70c870; }
+.log-msg.warn { color: #d4a030; }
+.log-msg.err { color: #e05050; }
+.log-msg.info { color: #90a880; }
+
+/* ── TABLE ── */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.section-title {
+  font-family: 'Pirata One', cursive;
+  font-size: 15px;
+  color: var(--ink);
+  letter-spacing: 0.03em;
+}
+.tag {
+  display: inline-block;
+  font-family: 'IM Fell English', serif;
+  font-size: 10px;
+  padding: 1px 8px;
+  background: var(--red);
+  color: var(--gold-light);
+  margin-left: 8px;
+  border: 1px solid #5a0808;
+}
+.actions-row { display: flex; gap: 8px; }
+.table-wrap { overflow-x: auto; border: 2px solid var(--border); box-shadow: 2px 2px 0 var(--border-dark); }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead tr { background: linear-gradient(180deg, var(--ink) 0%, #3c2810 100%); border-bottom: 2px solid var(--border); }
+th {
+  text-align: left;
+  padding: 9px 12px;
+  font-family: 'Pirata One', cursive;
+  font-size: 11px;
+  color: var(--gold-light);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+th:hover { color: #fff; }
+tbody tr { border-bottom: 1px solid var(--parchment-darker); transition: background .1s; cursor: pointer; background: var(--parchment); }
+tbody tr:nth-child(even) { background: var(--parchment-dark); }
+tbody tr:hover { background: #ffeebb; }
+tbody tr.in-route { border-left: 4px solid var(--red); background: #fff8e0 !important; }
+td { padding: 8px 12px; white-space: nowrap; color: var(--ink); font-family: 'IM Fell English', serif; font-size: 12px; }
+td.address { font-weight: bold; max-width: 200px; white-space: normal; }
+td.dim { color: var(--text-dim); font-style: italic; }
+td.green { color: var(--green); font-weight: bold; }
+.empty-state {
+  padding: 50px 20px;
+  text-align: center;
+  color: var(--text-faint);
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 14px;
+  border: 2px dashed var(--border);
+  background: var(--parchment-dark);
+}
+
+/* ── ROUTE ── */
+.route-section {
+  background: linear-gradient(135deg, #fffae8, #f4e4b0);
+  border: 2px solid var(--red);
+  padding: 16px;
+  box-shadow: 2px 2px 0 #5a0808, 4px 4px 12px rgba(0,0,0,0.15);
+  position: relative;
+}
+.route-section::before {
+  content: '🗺';
+  position: absolute;
+  top: -14px; right: 16px;
+  font-size: 24px;
+  background: var(--parchment);
+  padding: 0 4px;
+}
+.route-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.route-title {
+  font-family: 'Pirata One', cursive;
+  font-size: 18px;
+  color: var(--red);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.route-list { display: flex; flex-direction: column; gap: 5px; }
+.route-stop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--parchment-dark);
+  border: 1px solid var(--border);
+  transition: border-color .15s;
+}
+.route-stop:hover { border-color: var(--red); background: #ffeebb; }
+.stop-num {
+  width: 28px; height: 28px;
+  background: var(--red);
+  color: var(--gold-light);
+  font-family: 'Pirata One', cursive;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #5a0808;
+  box-shadow: 1px 1px 0 #3a0505;
+}
+.stop-addr { font-family: 'IM Fell English', serif; font-size: 12px; font-weight: bold; color: var(--ink); }
+.stop-detail { font-family: 'IM Fell English', serif; font-size: 10px; color: var(--text-dim); font-style: italic; margin-top: 1px; }
+.stop-remove {
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  transition: color .15s;
+  margin-left: auto;
+}
+.stop-remove:hover { color: var(--red); }
+
+.print-header { display: none; }
+
+@media print {
+  body, .parchment-wrap { background: white; }
+  body::before { display: none; }
+  .marquee-bar, header, .sidebar, .stats-row, .terminal, .leads-section, .actions-row, .no-print { display: none !important; }
+  .content { padding: 0; background: white; }
+  .route-section { background: white; border: 2px solid black; box-shadow: none; }
+  .route-section::before { display: none; }
+  .route-title { color: black; }
+  .route-stop { border: 1px solid #ccc; background: #f9f9f9; break-inside: avoid; }
+  .stop-num { background: black; color: white; }
+  .stop-addr, .stop-detail { color: black; }
+  .stop-remove { display: none; }
+  .print-header { display: block !important; margin-bottom: 20px; }
+}
+</style>
+</head>
+<body>
+<div class="parchment-wrap">
+
+<header>
+  <div class="logo-wrap">
+    <div class="logo-eyebrow">☠ &nbsp; Ye Olde Solar Lead Generation &nbsp; ☠</div>
+    <div class="logo-main">Booty <span>Finder!</span></div>
+    <div class="logo-sub">Charting the Seas of Uninstalled Solar</div>
+  </div>
+  <div class="status-bar">
+    <div class="status-text"><span class="status-dot" id="statusDot"></span><span id="statusText">AT ANCHOR</span></div>
+  </div>
+</header>
+
+<div class="marquee-bar">
+  <span class="marquee-inner">
+    ⚓ &nbsp; "A smooth sea never made a skilled solar salesman!" &nbsp; ☠ &nbsp; "Thar she blows — a roof without panels!" &nbsp; 🗺 &nbsp; "X marks the spot... where the solar ain't!" &nbsp; ⚓ &nbsp; "Batten down the hatches and fire up the lead list!" &nbsp; ☠ &nbsp; "No solar? That be BOOTY, matey!" &nbsp; 🏴‍☠️ &nbsp; "Sail fast, sell faster!" &nbsp; ⚓
+  </span>
+</div>
+
+<div class="main">
+
+  <div class="sidebar">
+    <div>
+      <div class="panel-label">🗝 Treasure Map Config</div>
+      <div class="field">
+        <label>Target ZIP Code (The Territory)</label>
+        <input type="text" id="zipCode" placeholder="e.g. 94103" maxlength="5" />
+      </div>
+      <div class="field">
+        <label>Render Proxy URL</label>
+        <input type="text" id="proxyUrl" value="https://your-service.onrender.com" placeholder="https://your-service.onrender.com" />
+      </div>
+      <div class="notice">Enter your Render service URL above. The ATTOM key is stored securely on the server — not here.</div>
+    </div>
+
+    <hr class="divider">
+
+    <div>
+      <div class="panel-label">⚔ Plunder Filters</div>
+      <div class="range-row">
+        <label>Sale Year — From <span class="range-val" id="saleFromVal">1995</span></label>
+        <input type="range" id="saleFrom" min="1995" max="2025" value="1995" oninput="document.getElementById('saleFromVal').textContent=this.value" />
+      </div>
+      <div class="range-row">
+        <label>Sale Year — To <span class="range-val" id="saleToVal">2025</span></label>
+        <input type="range" id="saleTo" min="1995" max="2025" value="2025" oninput="document.getElementById('saleToVal').textContent=this.value" />
+      </div>
+      <div class="range-row">
+        <label>Built Before <span class="range-val" id="builtBeforeVal">2020</span></label>
+        <input type="range" id="builtBefore" min="1900" max="2024" value="2020" oninput="document.getElementById('builtBeforeVal').textContent=this.value" />
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <button class="btn btn-primary" id="scanBtn" onclick="startScan()">&#9875; Hunt the Booty!</button>
+    <button class="btn btn-secondary" id="demoBtn" onclick="loadDemo()">&#9875; Load Demo Treasure</button>
+    <button class="btn btn-secondary" id="resetBtn" onclick="resetAll()" disabled>&#9875; Abandon Ship</button>
+    <div class="loading-bar"><div class="loading-bar-inner" id="loadingBar"></div></div>
+  </div>
+
+  <div class="content">
+
+    <div class="stats-row">
+      <div class="stat-card highlight">
+        <div class="stat-label">Booty Found</div>
+        <div class="stat-val" id="statLeads">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">On the Map</div>
+        <div class="stat-val" id="statRoute">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Territory</div>
+        <div class="stat-val" id="statZip" style="font-size:18px;padding-top:6px;">—</div>
+      </div>
+    </div>
+
+    <div class="terminal" id="terminal">
+      <div class="log-line"><span class="log-time">00:00:00</span><span class="log-msg info">Booty Finder v1.0 — All hands on deck! Enter yer credentials and hunt the booty, or load demo treasure.</span></div>
+    </div>
+
+    <div class="leads-section">
+      <div class="section-header">
+        <div class="section-title">&#9875; Discovered Plunder <span class="tag no-print" id="leadCount">0 properties</span></div>
+        <div class="actions-row no-print">
+          <button class="btn btn-secondary" style="width:auto;padding:6px 12px;font-size:11px;margin:0" onclick="addAllToRoute()" id="addAllBtn" disabled>+ Chart All Stops</button>
+          <button class="btn btn-secondary" style="width:auto;padding:6px 12px;font-size:11px;margin:0" onclick="exportCSV()" id="exportBtn" disabled>&#8595; Export the Manifest</button>
+        </div>
+      </div>
+      <div id="leadsContainer">
+        <div class="empty-state">&#9875; No treasure found yet, ye scallywag!<br><em>Configure yer filters and hunt the booty — or load demo treasure to practice.</em></div>
+      </div>
+    </div>
+
+    <div class="route-section" id="routeSection" style="display:none;">
+      <div class="print-header">
+        <h1 style="font-family:serif;font-size:22px;margin-bottom:4px;">Booty Finder! — Treasure Map Route Sheet</h1>
+        <div style="font-size:12px;color:#555;" id="printMeta"></div>
+      </div>
+      <div class="route-header">
+        <div class="route-title">&#9875; The Treasure Map <span style="font-size:11px;color:var(--text-dim);font-weight:400;font-family:'IM Fell English',serif;" id="routeSubtitle"></span></div>
+        <div class="actions-row no-print">
+          <button class="btn btn-secondary" style="width:auto;padding:6px 12px;font-size:11px;margin:0" onclick="optimizeRoute()">&#9875; Optimize the Route</button>
+          <button class="btn btn-primary" style="width:auto;padding:6px 12px;font-size:11px;margin:0" onclick="window.print()">&#128438; Print the Map</button>
+        </div>
+      </div>
+      <div class="route-list" id="routeList"></div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+let leads = [], route = [], scanning = false;
+
+function log(msg, type='info') {
+  const t = new Date().toTimeString().split(' ')[0];
+  const term = document.getElementById('terminal');
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = '<span class="log-time">'+t+'</span><span class="log-msg '+type+'">'+msg+'</span>';
+  term.appendChild(line);
+  term.scrollTop = term.scrollHeight;
+}
+
+function setStatus(label, active=false) {
+  document.getElementById('statusText').textContent = label;
+  document.getElementById('statusDot').className = 'status-dot' + (active ? ' active' : '');
+}
+
+function setProgress(pct) {
+  document.getElementById('loadingBar').style.width = pct + '%';
+}
+
+async function attomFetch(path, params) {
+  const proxyBase = document.getElementById('proxyUrl').value.trim().replace(/\/$/, '');
+  if (!proxyBase) throw new Error('No proxy URL configured.');
+  // Build request to Render proxy — API key lives on the server, never in browser
+  const qs = new URLSearchParams({ path, ...params });
+  const res = await fetch(proxyBase + '/attom?' + qs.toString(), {
+    headers: { 'accept': 'application/json' }
+  });
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error('ATTOM ' + res.status + ': ' + txt.substring(0,200));
+  }
+  const json = await res.json();
+  if (json.status && json.status.code && json.status.code !== 0 && json.status.code !== 200) {
+    throw new Error('ATTOM error: ' + (json.status.msg || json.status.code));
+  }
+  return json;
+}
+
+async function startScan() {
+  if (scanning) return;
+  const zip = document.getElementById('zipCode').value.trim();
+  const saleFrom = +document.getElementById('saleFrom').value;
+  const saleTo = +document.getElementById('saleTo').value;
+  const builtBefore = +document.getElementById('builtBefore').value;
+  if (!zip || zip.length !== 5 || isNaN(+zip)) { log('Blimey! Enter a valid 5-digit ZIP code!', 'warn'); return; }
+
+  scanning = true; leads = []; route = [];
+  setStatus('SAILING...', true); setProgress(5);
+  document.getElementById('scanBtn').disabled = true;
+  document.getElementById('resetBtn').disabled = false;
+  log('Setting sail for ZIP ' + zip + ' — thar be booty out there!', 'ok');
+  log('Filters: Sale ' + saleFrom + '-' + saleTo + ' | Built before ' + builtBefore, 'info');
+
+  try {
+    let allProps = [], page = 1, totalPages = 1;
+    do {
+      const data = await attomFetch('/property/snapshot', {
+        postalcode: zip,
+        startsalesearchdate: saleFrom + '-01-01',
+        endsalesearchdate: saleTo + '-12-31',
+        pagesize: 100, page: page
+      });
+      const props = data.property || [];
+      if (page === 1) log('Response keys: ' + Object.keys(data).join(', '), 'info');
+      allProps = allProps.concat(props);
+      totalPages = Math.ceil((data.status?.total ?? props.length) / 100);
+      log('Page ' + page + '/' + totalPages + ' — ' + props.length + ' properties spotted', 'info');
+      setProgress(15 + (page / Math.max(totalPages,1)) * 45);
+      page++;
+      if (page > 10) { log('Capped at 1,000 — narrow yer filters, captain!', 'warn'); break; }
+    } while (page <= totalPages);
+
+    log('Total haul: ' + allProps.length + ' properties', 'ok');
+    const filtered = allProps.filter(p => {
+      const yr = parseInt(p.building?.summary?.yearBuilt || p.summary?.yearBuilt || 0);
+      return yr > 0 && yr < builtBefore;
+    });
+    log('After year-built filter: ' + filtered.length + ' remain', 'info');
+    setProgress(75);
+
+    leads = filtered.map(p => {
+      const a = p.address || {};
+      return {
+        id: p.identifier?.attomId || Math.random().toString(36).slice(2),
+        address: a.oneLine || [a.line1, a.line2].filter(Boolean).join(' ') || '—',
+        city: a.locality || a.city || '',
+        state: a.countrySubd || a.state || '',
+        zip: a.postal1 || a.zip || zip,
+        yearBuilt: parseInt(p.building?.summary?.yearBuilt || p.summary?.yearBuilt || 0) || '?',
+        saleDate: p.sale?.amount?.saleTransDate || p.sale?.saleTransDate || '?',
+        salePrice: p.sale?.amount?.saleAmt ? '$' + Number(p.sale.amount.saleAmt).toLocaleString() : '?',
+        lat: p.location?.latitude || null,
+        lng: p.location?.longitude || null,
+        inRoute: false
+      };
+    });
+
+    setProgress(100);
+    updateStats(zip);
+    renderLeadsTable();
+    setStatus('BOOTY FOUND!');
+    log('Shiver me timbers! ' + leads.length + ' leads discovered, captain!', 'ok');
+  } catch(err) {
+    log('Blimey! ' + err.message, 'err');
+    if (err.message.includes('401') || err.message.includes('403')) log('The kraken rejected yer API key! Check yer credentials.', 'warn');
+    else if (err.message.includes('fetch') || err.message.includes('Network')) log('The messenger parrot died! Is proxy.js running?', 'warn');
+    else log('Something went wrong in Davy Jones locker. Try again.', 'warn');
+    setStatus('SHIPWRECKED'); setProgress(0);
+  }
+  scanning = false;
+  document.getElementById('scanBtn').disabled = false;
+}
+
+function loadDemo() {
+  const zip = document.getElementById('zipCode').value.trim() || '92101';
+  const builtBefore = +document.getElementById('builtBefore').value;
+  const saleFrom = +document.getElementById('saleFrom').value;
+  const saleTo = +document.getElementById('saleTo').value;
+  const sample = [
+    { address:'4821 Maple Ave', city:'San Diego', state:'CA', yearBuilt:1987, saleDate:'2021-06-14', salePrice:'$485,000', lat:32.7341, lng:-117.1443 },
+    { address:'1103 Birchwood Dr', city:'San Diego', state:'CA', yearBuilt:1994, saleDate:'2019-03-22', salePrice:'$612,000', lat:32.7289, lng:-117.1521 },
+    { address:'772 Sunset Blvd', city:'San Diego', state:'CA', yearBuilt:2005, saleDate:'2022-11-08', salePrice:'$730,500', lat:32.7412, lng:-117.1387 },
+    { address:'3390 Oak Street', city:'San Diego', state:'CA', yearBuilt:1978, saleDate:'2020-07-30', salePrice:'$398,000', lat:32.7198, lng:-117.1609 },
+    { address:'508 Elmwood Ct', city:'San Diego', state:'CA', yearBuilt:2012, saleDate:'2023-01-15', salePrice:'$895,000', lat:32.7355, lng:-117.1475 },
+    { address:'2244 Riverdale Rd', city:'San Diego', state:'CA', yearBuilt:1999, saleDate:'2018-09-04', salePrice:'$544,000', lat:32.7267, lng:-117.1558 },
+    { address:'619 Pinecrest Way', city:'San Diego', state:'CA', yearBuilt:1963, saleDate:'2021-04-19', salePrice:'$352,000', lat:32.7388, lng:-117.1402 },
+    { address:'1887 Hillcrest Lane', city:'San Diego', state:'CA', yearBuilt:2008, saleDate:'2022-08-27', salePrice:'$778,000', lat:32.7230, lng:-117.1583 },
+    { address:'934 Valley View Dr', city:'San Diego', state:'CA', yearBuilt:1985, saleDate:'2016-12-11', salePrice:'$427,500', lat:32.7301, lng:-117.1499 },
+    { address:'4455 Meadowbrook Pl', city:'San Diego', state:'CA', yearBuilt:2001, saleDate:'2023-05-02', salePrice:'$663,000', lat:32.7423, lng:-117.1361 },
+  ];
+  leads = sample
+    .filter(p => p.yearBuilt < builtBefore && +p.saleDate.substring(0,4) >= saleFrom && +p.saleDate.substring(0,4) <= saleTo)
+    .map((p,i) => ({ ...p, id:'demo_'+i, zip, inRoute:false }));
+  route = [];
+  updateStats(zip + ' (DEMO)');
+  renderLeadsTable();
+  setStatus('TREASURE LOADED'); setProgress(100);
+  document.getElementById('resetBtn').disabled = false;
+  log('Arrr! Demo treasure loaded — ' + leads.length + ' properties awaiting plunder!', 'ok');
+  log('All features work in demo mode. Use proxy.js + API key for live booty.', 'warn');
+}
+
+function updateStats(zipLabel) {
+  document.getElementById('statLeads').textContent = leads.length;
+  document.getElementById('statRoute').textContent = route.length;
+  document.getElementById('statZip').textContent = zipLabel || '—';
+  document.getElementById('leadCount').textContent = leads.length + ' properties';
+  document.getElementById('addAllBtn').disabled = leads.length === 0;
+  document.getElementById('exportBtn').disabled = leads.length === 0;
+}
+
+function renderLeadsTable() {
+  const c = document.getElementById('leadsContainer');
+  if (!leads.length) { c.innerHTML = '<div class="empty-state">No plunder found in these waters, captain!</div>'; return; }
+  c.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Address</th><th>City</th><th>Year Built</th><th>Sale Date</th><th>Sale Price</th><th>Chart</th></tr></thead><tbody>' +
+    leads.map((l,i) => '<tr class="'+(l.inRoute?'in-route':'')+'" onclick="toggleRoute('+i+')"><td class="address">'+l.address+'</td><td class="dim">'+l.city+', '+l.state+'</td><td class="dim">'+l.yearBuilt+'</td><td class="dim">'+(l.saleDate!=='?'?l.saleDate.substring(0,10):'-')+'</td><td class="green">'+l.salePrice+'</td><td style="text-align:center;color:'+(l.inRoute?'#8b1a1a':'#9b7440')+';">'+(l.inRoute?'&#9875;':'+')+'</td></tr>').join('') +
+    '</tbody></table></div>';
+}
+
+function toggleRoute(idx) {
+  leads[idx].inRoute = !leads[idx].inRoute;
+  if (leads[idx].inRoute) { route.push(leads[idx]); log('Charted: '+leads[idx].address, 'ok'); }
+  else { route = route.filter(r => r.id !== leads[idx].id); }
+  document.getElementById('statRoute').textContent = route.length;
+  renderLeadsTable(); renderRoute();
+}
+
+function addAllToRoute() {
+  leads.forEach(l => l.inRoute = true);
+  route = [...leads];
+  document.getElementById('statRoute').textContent = route.length;
+  renderLeadsTable(); renderRoute();
+  log('All ' + leads.length + ' treasures charted on the map, captain!', 'ok');
+}
+
+function optimizeRoute() {
+  const geo = route.filter(r => r.lat && r.lng);
+  if (geo.length < 2) { log('Need 2+ stops with coordinates to chart the fastest course!', 'warn'); return; }
+  const visited = new Array(geo.length).fill(false);
+  const opt = []; let cur = 0; visited[0] = true; opt.push(geo[0]);
+  for (let i = 1; i < geo.length; i++) {
+    let near = -1, dist = Infinity;
+    for (let j = 0; j < geo.length; j++) {
+      if (!visited[j]) {
+        const d = Math.hypot(geo[cur].lat-geo[j].lat, geo[cur].lng-geo[j].lng);
+        if (d < dist) { dist = d; near = j; }
+      }
+    }
+    visited[near] = true; opt.push(geo[near]); cur = near;
+  }
+  route = [...opt, ...route.filter(r => !r.lat || !r.lng)];
+  renderRoute(); log('The fastest plundering route has been charted, matey!', 'ok');
+}
+
+function renderRoute() {
+  const sec = document.getElementById('routeSection');
+  if (!route.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  document.getElementById('routeSubtitle').textContent = '— ' + route.length + ' stops';
+  const zip = document.getElementById('zipCode').value || '—';
+  document.getElementById('printMeta').textContent = 'ZIP: ' + zip + ' | Generated: ' + new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) + ' | ' + route.length + ' stops';
+  document.getElementById('routeList').innerHTML = route.map((s,i) =>
+    '<div class="route-stop"><div class="stop-num">'+(i+1)+'</div><div><div class="stop-addr">'+s.address+'</div><div class="stop-detail">'+s.city+', '+s.state+' '+s.zip+' &nbsp;·&nbsp; Built '+s.yearBuilt+' &nbsp;·&nbsp; '+s.salePrice+'</div></div><button class="stop-remove no-print" onclick="removeStop(\''+s.id+'\')" title="Remove from map">&#10005;</button></div>'
+  ).join('');
+}
+
+function removeStop(id) {
+  const l = leads.find(x => x.id === id);
+  if (l) l.inRoute = false;
+  route = route.filter(r => r.id !== id);
+  document.getElementById('statRoute').textContent = route.length;
+  renderLeadsTable(); renderRoute();
+}
+
+function exportCSV() {
+  const rows = [['Address','City','State','ZIP','Year Built','Sale Date','Sale Price','In Route'],
+    ...leads.map(l => ['"'+l.address+'"',l.city,l.state,l.zip,l.yearBuilt,l.saleDate!=='?'?l.saleDate.substring(0,10):'',l.salePrice,l.inRoute?'YES':'NO'])];
+  const blob = new Blob([rows.map(r=>r.join(',')).join('\n')], {type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'booty_finder_'+document.getElementById('zipCode').value+'_'+Date.now()+'.csv'; a.click();
+  log('The manifest has been exported, captain!', 'ok');
+}
+
+function resetAll() {
+  leads = []; route = [];
+  document.getElementById('statLeads').textContent = '0';
+  document.getElementById('statRoute').textContent = '0';
+  document.getElementById('statZip').textContent = '—';
+  document.getElementById('leadCount').textContent = '0 properties';
+  document.getElementById('addAllBtn').disabled = true;
+  document.getElementById('exportBtn').disabled = true;
+  document.getElementById('routeSection').style.display = 'none';
+  document.getElementById('leadsContainer').innerHTML = '<div class="empty-state">&#9875; No treasure found yet, ye scallywag!<br><em>Configure yer filters and hunt the booty — or load demo treasure to practice.</em></div>';
+  document.getElementById('resetBtn').disabled = true;
+  document.getElementById('scanBtn').disabled = false;
+  setProgress(0); setStatus('AT ANCHOR');
+  log('Ship cleared and ready to sail again, captain!', 'info');
+}
+</script>
+</body>
+</html>
